@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ร้านค้า — Mailly OTP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="index.html"><span class="logo-mark"><i class="fa-solid fa-message"></i></span> MAILLY OTP</a>
+    <nav class="nav">
+      <a href="index.html">รับ OTP</a><a href="page2.html">เติมเครดิต</a><a class="active" href="shop.html">ร้านค้า</a><a href="youtube.html">YouTube</a>
+    </nav>
+    <div class="account">
+      <div class="balance-chip"><i class="fa-solid fa-wallet"></i><span>เครดิต</span><strong data-mailly-balance>—</strong></div>
+      <div class="user-chip"><span class="avatar" data-mailly-avatar>?</span><span data-mailly-username>กำลังโหลด</span></div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="page-head">
+      <div><h1>ร้านค้าดิจิทัล</h1><p>สินค้า ราคา และสต็อกทั้งหมดดึงจากระบบหลังบ้านแบบเรียลไทม์</p></div>
+      <button class="button secondary" onclick="switchView()"><i class="fa-solid fa-clock-rotate-left"></i> <span id="viewButtonText">ประวัติการซื้อ</span></button>
+    </div>
+
+    <section id="shopView">
+      <div id="shopMessage" class="notice hidden" style="margin-bottom:16px"></div>
+      <div id="products" class="products"><div class="loader"></div></div>
+    </section>
+
+    <section id="historyView" class="hidden card">
+      <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-bag-shopping"></i></span> ประวัติการซื้อของฉัน</h2><p>รายการนี้ดึงจากหลังบ้าน จึงเปิดดูได้จากทุกอุปกรณ์</p></div>
+      <div id="history" class="card-body list"><div class="loader"></div></div>
+    </section>
+  </main>
+
+  <div id="buyModal" class="modal hidden">
+    <div class="modal-card">
+      <h2 id="modalName">ยืนยันการซื้อ</h2>
+      <p id="modalDescription" class="muted" style="font-size:11px;line-height:1.7"></p>
+      <div class="notice">ระบบจะหักเครดิตและจองสต็อกจากหลังบ้านทันที</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px"><span class="muted">ราคาสินค้า</span><strong id="modalPrice" class="price">0 ฿</strong></div>
+      <div class="actions"><button class="button secondary" onclick="closeBuy()">ยกเลิก</button><button id="confirmBuy" class="button" onclick="confirmBuy()">ยืนยันการซื้อ</button></div>
+    </div>
+  </div>
+
+  <div id="detailModal" class="modal hidden">
+    <div class="modal-card">
+      <h2 id="detailName">ข้อมูลสินค้า</h2>
+      <div id="detailData" class="notice" style="white-space:pre-wrap;word-break:break-word;margin-top:15px"></div>
+      <div class="actions"><button class="button" onclick="document.getElementById('detailModal').classList.add('hidden')">ปิด</button></div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    let selectedProduct = null;
+    let showingHistory = false;
+
+    function showMessage(text, type = "") {
+      const el = document.getElementById("shopMessage");
+      el.textContent = text;
+      el.className = "notice " + type;
+    }
+
+    async function loadProducts() {
+      const result = await Mailly.api("getShopProducts");
+      if (!result.success) throw new Error(result.message || "โหลดสินค้าไม่สำเร็จ");
+      const items = result.products || [];
+      const container = document.getElementById("products");
+      if (!items.length) {
+        container.innerHTML = '<div class="card empty" style="grid-column:1/-1">ยังไม่มีสินค้า กรุณาเพิ่มสินค้าและสต็อกในชีต Products / ProductStock</div>';
+        return;
+      }
+      container.innerHTML = items.map(item => `
+        <article class="product">
+          <div class="product-icon"><i class="fa-solid ${Mailly.escape(item.icon || "fa-box")}"></i></div>
+          <h3>${Mailly.escape(item.name)}</h3>
+          <p>${Mailly.escape(item.description)}</p>
+          <div class="product-foot">
+            <div><strong class="price" style="font-size:19px">${Number(item.price).toFixed(2)} ฿</strong><div class="muted" style="font-size:9px">เหลือ ${Number(item.stock)} ชิ้น</div></div>
+            <button class="button" ${Number(item.stock) < 1 ? "disabled" : ""} onclick="openBuy('${Mailly.escape(item.id)}')">${Number(item.stock) < 1 ? "สินค้าหมด" : "ซื้อสินค้า"}</button>
+          </div>
+        </article>`).join("");
+      window.shopProducts = items;
+    }
+
+    function openBuy(id) {
+      selectedProduct = (window.shopProducts || []).find(x => String(x.id) === String(id));
+      if (!selectedProduct) return;
+      document.getElementById("modalName").textContent = selectedProduct.name;
+      document.getElementById("modalDescription").textContent = selectedProduct.description || "";
+      document.getElementById("modalPrice").textContent = Number(selectedProduct.price).toFixed(2) + " ฿";
+      document.getElementById("buyModal").classList.remove("hidden");
+    }
+
+    function closeBuy() {
+      selectedProduct = null;
+      document.getElementById("buyModal").classList.add("hidden");
+    }
+
+    async function confirmBuy() {
+      if (!selectedProduct) return;
+      const button = document.getElementById("confirmBuy");
+      button.disabled = true;
+      button.textContent = "กำลังซื้อ...";
+      try {
+        const result = await Mailly.api("buyProductWithCredit", { productId: selectedProduct.id });
+        if (!result.success) throw new Error(result.message || "ซื้อสินค้าไม่สำเร็จ");
+        Mailly.setBalance(result.newCredit);
+        closeBuy();
+        showMessage("ซื้อสินค้าสำเร็จ เปิดดูข้อมูลได้ในประวัติการซื้อ", "success");
+        await loadProducts();
+      } catch (error) {
+        showMessage(error.message, "error");
+        closeBuy();
+      } finally {
+        button.disabled = false;
+        button.textContent = "ยืนยันการซื้อ";
+      }
+    }
+
+    async function loadHistory() {
+      const result = await Mailly.api("getMyPurchases");
+      if (!result.success) throw new Error(result.message || "โหลดประวัติไม่สำเร็จ");
+      const items = result.purchases || [];
+      const container = document.getElementById("history");
+      if (!items.length) return container.innerHTML = '<div class="empty">ยังไม่มีประวัติการซื้อ</div>';
+      container.innerHTML = items.map((item, index) => `
+        <div class="list-item">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div><strong>${Mailly.escape(item.productName)}</strong><span class="muted">${Mailly.escape(item.orderId)} · ${Mailly.escape(item.createdAt)}</span></div>
+            <div style="text-align:right"><strong>${Number(item.price).toFixed(2)} ฿</strong><button class="button secondary" style="min-height:34px;font-size:10px" onclick="showDetail(${index})">ดูข้อมูล</button></div>
+          </div>
+        </div>`).join("");
+      window.purchaseItems = items;
+    }
+
+    function showDetail(index) {
+      const item = window.purchaseItems[index];
+      document.getElementById("detailName").textContent = item.productName;
+      document.getElementById("detailData").textContent = item.itemData || "ไม่มีข้อมูลเพิ่มเติม";
+      document.getElementById("detailModal").classList.remove("hidden");
+    }
+
+    async function switchView() {
+      showingHistory = !showingHistory;
+      document.getElementById("shopView").classList.toggle("hidden", showingHistory);
+      document.getElementById("historyView").classList.toggle("hidden", !showingHistory);
+      document.getElementById("viewButtonText").textContent = showingHistory ? "กลับหน้าร้าน" : "ประวัติการซื้อ";
+      if (showingHistory) await loadHistory();
+    }
+
+    (async () => {
+      try {
+        await Mailly.requireUser();
+        await loadProducts();
+      } catch (error) {
+        showMessage(error.message, "error");
+      }
+    })();
+  </script>
+</body>
+</html>

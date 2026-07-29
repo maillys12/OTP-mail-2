@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>YouTube Premium — Mailly OTP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="index.html"><span class="logo-mark"><i class="fa-solid fa-message"></i></span> MAILLY OTP</a>
+    <nav class="nav">
+      <a href="index.html">รับ OTP</a><a href="page2.html">เติมเครดิต</a><a href="shop.html">ร้านค้า</a><a class="active" href="youtube.html">YouTube</a>
+    </nav>
+    <div class="account">
+      <div class="balance-chip"><i class="fa-solid fa-wallet"></i><span>เครดิต</span><strong data-mailly-balance>—</strong></div>
+      <div class="user-chip"><span class="avatar" data-mailly-avatar>?</span><span data-mailly-username>กำลังโหลด</span></div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="page-head">
+      <div><h1>YouTube Premium</h1><p>ดูสถานะแฟม กล่องข้อความ และสั่งแพ็กเกจด้วยบัญชีเดียวกับระบบ OTP</p></div>
+      <button class="button" onclick="openOrder()"><i class="fa-brands fa-youtube"></i> สั่งซื้อแพ็กเกจ</button>
+    </div>
+
+    <div id="message" class="notice hidden" style="margin-bottom:17px"></div>
+
+    <div class="grid">
+      <section class="card col-8">
+        <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-people-roof"></i></span> รายการ YouTube ของฉัน</h2><p>ระบบแสดงเฉพาะข้อมูลของบัญชีที่ล็อกอินอยู่</p></div>
+        <div id="familyList" class="card-body list"><div class="loader"></div></div>
+      </section>
+      <section class="card col-4">
+        <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-inbox"></i></span> กล่องข้อความ</h2><p>ข้อความแจ้งเตือนจากผู้ดูแล</p></div>
+        <div id="inbox" class="card-body list"><div class="loader"></div></div>
+      </section>
+      <section id="adminSection" class="card col-12 hidden">
+        <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-shield-halved"></i></span> จัดการ YouTube</h2><p>ส่วนนี้เปิดเฉพาะบัญชี admin ที่ผ่าน session แล้ว</p></div>
+        <div id="adminList" class="card-body list"><div class="loader"></div></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="orderModal" class="modal hidden">
+    <div class="modal-card">
+      <h2>สั่งซื้อ YouTube Premium</h2>
+      <p class="muted" style="font-size:11px">ราคาจะถูกตรวจสอบและหักจากระบบหลังบ้านเท่านั้น</p>
+      <div class="field"><label>แพ็กเกจ</label>
+        <select id="packageId" class="select">
+          <option value="pkg_individual">รายบุคคล — 150 ฿</option>
+          <option value="pkg_monthly">Family รายเดือน — 250 ฿</option>
+          <option value="pkg_transfer_india">ย้ายแฟมไปอินเดีย — 375 ฿</option>
+          <option value="pkg_new_1year">Family 1 ปี — 1,440 ฿</option>
+        </select>
+      </div>
+      <div class="field"><label>รูปแบบอีเมล</label>
+        <select id="emailMode" class="select" onchange="toggleEmail()"><option value="shop">ใช้อีเมลร้าน</option><option value="own">ใช้อีเมลของฉัน</option></select>
+      </div>
+      <div id="emailField" class="field hidden"><label>Email ที่ต้องการใช้</label><input id="customerEmail" class="input" type="email" autocomplete="email" placeholder="name@example.com"><div class="muted" style="font-size:9px;margin-top:5px">เพื่อความปลอดภัย ระบบไม่รับและไม่เก็บรหัสผ่านอีเมล</div></div>
+      <div class="actions"><button class="button secondary" onclick="closeOrder()">ยกเลิก</button><button id="orderButton" class="button" onclick="submitOrder()">ยืนยันสั่งซื้อ</button></div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    let adminRows = [];
+
+    function showMessage(text, type = "") {
+      const el = document.getElementById("message");
+      el.textContent = text;
+      el.className = "notice " + type;
+    }
+
+    function openOrder() { document.getElementById("orderModal").classList.remove("hidden"); }
+    function closeOrder() { document.getElementById("orderModal").classList.add("hidden"); }
+    function toggleEmail() { document.getElementById("emailField").classList.toggle("hidden", document.getElementById("emailMode").value !== "own"); }
+
+    function dateText(value) {
+      if (!value) return "ยังไม่กำหนด";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString("th-TH");
+    }
+
+    async function loadUserData() {
+      const [familyResult, inboxResult] = await Promise.all([
+        Mailly.api("getYtUserData"),
+        Mailly.api("getUserInboxMessages")
+      ]);
+      const families = familyResult.items || [];
+      const familyList = document.getElementById("familyList");
+      familyList.innerHTML = families.length ? families.map(item => `
+        <div class="list-item">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div><strong>${Mailly.escape(item.email || "อีเมลร้าน")}</strong><span class="muted">Family ${Mailly.escape(item.familyId || "—")}</span></div>
+            <div style="text-align:right"><strong>${Mailly.escape(item.status || "รอดำเนินการ")}</strong><span class="muted">หมดอายุ ${Mailly.escape(dateText(item.expireDate))}</span></div>
+          </div>
+        </div>`).join("") : '<div class="empty">ยังไม่มีรายการ YouTube ในบัญชีนี้</div>';
+
+      const messages = inboxResult.messages || [];
+      const inbox = document.getElementById("inbox");
+      inbox.innerHTML = messages.length ? messages.slice().reverse().map(item => `
+        <div class="list-item"><strong>แจ้งเตือนจากผู้ดูแล</strong><div style="white-space:pre-wrap">${Mailly.escape(item.message)}</div><span class="muted">${Mailly.escape(item.date)}</span></div>`).join("") : '<div class="empty">ยังไม่มีข้อความ</div>';
+    }
+
+    async function submitOrder() {
+      const packageId = document.getElementById("packageId").value;
+      const ownEmail = document.getElementById("emailMode").value === "own";
+      const email = ownEmail ? document.getElementById("customerEmail").value.trim() : "";
+      if (ownEmail && !email) return showMessage("กรุณากรอก Email", "error");
+      const button = document.getElementById("orderButton");
+      button.disabled = true;
+      button.textContent = "กำลังสั่งซื้อ...";
+      try {
+        const result = await Mailly.api("buyYtPackageWithCredit", { packageId, email });
+        if (!result.success) throw new Error(result.message || "สั่งซื้อไม่สำเร็จ");
+        Mailly.setBalance(result.newCredit);
+        closeOrder();
+        showMessage("รับคำสั่งซื้อแล้ว รหัสรายการ " + result.orderId, "success");
+      } catch (error) {
+        showMessage(error.message, "error");
+      } finally {
+        button.disabled = false;
+        button.textContent = "ยืนยันสั่งซื้อ";
+      }
+    }
+
+    async function loadAdmin() {
+      const result = await Mailly.api("getAllYtDataForAdmin");
+      if (!result.success) throw new Error(result.message || "โหลดข้อมูลแอดมินไม่สำเร็จ");
+      const rows = result.items || [];
+      adminRows = rows;
+      const container = document.getElementById("adminList");
+      container.innerHTML = rows.length ? rows.map(row => `
+        <div class="list-item">
+          <div class="grid" style="align-items:end">
+            <div class="col-4"><strong>${Mailly.escape(row.username)}</strong><span class="muted">${Mailly.escape(row.email)}</span></div>
+            <div class="col-4"><label class="muted">สถานะ</label><input id="status-${row.rowNumber}" class="input" value="${Mailly.escape(row.status || "")}"></div>
+            <div class="col-4"><label class="muted">วันหมดอายุ</label><input id="date-${row.rowNumber}" class="input" type="date" value="${row.expireDate ? new Date(row.expireDate).toISOString().slice(0,10) : ""}"></div>
+            <div class="col-12"><button class="button" onclick="saveAdmin(${row.rowNumber})">บันทึกข้อมูล</button></div>
+          </div>
+        </div>`).join("") : '<div class="empty">ยังไม่มีข้อมูลลูกค้า</div>';
+    }
+
+    async function saveAdmin(rowNumber) {
+      const result = await Mailly.api("updateYtUserDataFromAdmin", {
+        rowNumber,
+        newStatus: document.getElementById("status-" + rowNumber).value.trim(),
+        newExpireDate: document.getElementById("date-" + rowNumber).value
+      });
+      if (!result.success) return showMessage(result.message || "บันทึกไม่สำเร็จ", "error");
+      showMessage("บันทึกข้อมูลเรียบร้อย", "success");
+      await loadAdmin();
+    }
+
+    (async () => {
+      try {
+        const user = await Mailly.requireUser();
+        await loadUserData();
+        if (String(user.username).toLowerCase() === "admin") {
+          document.getElementById("adminSection").classList.remove("hidden");
+          await loadAdmin();
+        }
+      } catch (error) {
+        showMessage(error.message, "error");
+      }
+    })();
+  </script>
+</body>
+</html>

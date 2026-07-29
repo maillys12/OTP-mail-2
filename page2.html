@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>เติมเครดิต — Mailly OTP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="index.html"><span class="logo-mark"><i class="fa-solid fa-message"></i></span> MAILLY OTP</a>
+    <nav class="nav">
+      <a href="index.html">รับ OTP</a><a class="active" href="page2.html">เติมเครดิต</a><a href="shop.html">ร้านค้า</a><a href="youtube.html">YouTube</a>
+    </nav>
+    <div class="account">
+      <div class="balance-chip"><i class="fa-solid fa-wallet"></i><span>เครดิต</span><strong data-mailly-balance>—</strong></div>
+      <div class="user-chip"><span class="avatar" data-mailly-avatar>?</span><span data-mailly-username>กำลังโหลด</span></div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="page-head">
+      <div><h1>เติมเครดิต</h1><p>ชำระผ่าน PromptPay แล้วแนบสลิปเพื่อรอตรวจสอบ</p></div>
+      <a class="button secondary" href="index.html" style="display:grid;place-items:center;text-decoration:none"><i class="fa-solid fa-arrow-left"></i>&nbsp; กลับหน้าหลัก</a>
+    </div>
+
+    <div class="grid">
+      <section class="card col-7">
+        <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-qrcode"></i></span> สร้าง QR PromptPay</h2><p>ยอดขั้นต่ำ 50 บาท</p></div>
+        <div class="card-body">
+          <div class="field"><label>จำนวนเงินที่ต้องการเติม</label><input id="amount" class="input" type="number" min="50" step="1" placeholder="เช่น 100"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:17px">
+            <button class="button secondary" onclick="setAmount(50)">50 ฿</button>
+            <button class="button secondary" onclick="setAmount(100)">100 ฿</button>
+            <button class="button secondary" onclick="setAmount(300)">300 ฿</button>
+            <button class="button secondary" onclick="setAmount(500)">500 ฿</button>
+          </div>
+          <button class="button" style="width:100%" onclick="generateQr()"><i class="fa-solid fa-qrcode"></i> สร้าง QR Code</button>
+          <div id="qrBox" class="hidden" style="text-align:center;margin-top:20px">
+            <img id="qrImage" alt="PromptPay QR" style="width:min(280px,100%);border:1px solid var(--line);border-radius:18px">
+            <div class="notice" style="margin-top:12px">สแกนและชำระตามยอดที่ระบุ จากนั้นแนบสลิปในช่องด้านขวา</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card col-5">
+        <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-receipt"></i></span> ส่งสลิป</h2><p>ระบบผูกสลิปกับบัญชีที่ล็อกอินอยู่โดยอัตโนมัติ</p></div>
+        <div class="card-body">
+          <div class="field"><label>บัญชีผู้รับเครดิต</label><input class="input" data-mailly-username-input disabled></div>
+          <div class="field"><label>ไฟล์สลิป (JPG, PNG หรือ WEBP)</label><input id="slipFile" class="input" type="file" accept="image/jpeg,image/png,image/webp" style="padding:11px"></div>
+          <button id="submitButton" class="button" style="width:100%" onclick="submitTopup()"><i class="fa-solid fa-cloud-arrow-up"></i> ส่งสลิปเพื่อตรวจสอบ</button>
+          <div id="message" class="notice hidden" style="margin-top:14px"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script>
+    const PROMPTPAY_ID = "0633390911";
+    let selectedAmount = 0;
+
+    function message(text, type = "") {
+      const el = document.getElementById("message");
+      el.textContent = text;
+      el.className = "notice " + type;
+    }
+
+    function setAmount(value) {
+      document.getElementById("amount").value = value;
+      selectedAmount = value;
+    }
+
+    function generateQr() {
+      const amount = Number(document.getElementById("amount").value);
+      if (!Number.isFinite(amount) || amount < 50) return message("กรุณาระบุยอดอย่างน้อย 50 บาท", "error");
+      selectedAmount = amount;
+      document.getElementById("qrImage").src = "https://promptpay.io/" + PROMPTPAY_ID + "/" + amount.toFixed(2) + ".png";
+      document.getElementById("qrBox").classList.remove("hidden");
+      message("สร้าง QR แล้ว กรุณาชำระและแนบสลิป", "");
+    }
+
+    async function submitTopup() {
+      const amount = Number(document.getElementById("amount").value);
+      const file = document.getElementById("slipFile").files[0];
+      if (!Number.isFinite(amount) || amount < 50) return message("กรุณาระบุยอดอย่างน้อย 50 บาท", "error");
+      if (!file) return message("กรุณาเลือกไฟล์สลิป", "error");
+      if (file.size > 6 * 1024 * 1024) return message("ไฟล์ต้องมีขนาดไม่เกิน 6 MB", "error");
+
+      const button = document.getElementById("submitButton");
+      button.disabled = true;
+      button.textContent = "กำลังส่งสลิป...";
+      try {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result).split(",")[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const result = await Mailly.api("topupUserCredit", {
+          amount,
+          imageObj: { base64, mimeType: file.type }
+        });
+        if (!result.success) throw new Error(result.message || "ส่งสลิปไม่สำเร็จ");
+        message(result.message, "success");
+        document.getElementById("slipFile").value = "";
+      } catch (error) {
+        message(error.message, "error");
+      } finally {
+        button.disabled = false;
+        button.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> ส่งสลิปเพื่อตรวจสอบ';
+      }
+    }
+
+    (async () => {
+      try {
+        const user = await Mailly.requireUser();
+        document.querySelector("[data-mailly-username-input]").value = user.username;
+      } catch (error) {}
+    })();
+  </script>
+</body>
+</html>
