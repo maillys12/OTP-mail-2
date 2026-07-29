@@ -1,4 +1,4 @@
-const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbyXsFj5GV1qKQjXkUUQZ-0ZD6QwTg9UsRbUTRjG-38fccXp4n2GOh2-A14OXFHoxIKn/exec";
+const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbzaL4RsJRW3We_QLVnqBJCfqLKef2wiBqKBeN48gaI5e8X4wSRNDDouNKUM8arlQe6D/exec";
 const MAILLY_TOKEN_KEY = "mailly_session_token";
 
 const Mailly = {
