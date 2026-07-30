@@ -219,9 +219,11 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwGFdUowXZNnlomFjfcrnEMVf9hbYKjsi1wVQt938VgaKz8RbbrgKILxD9rbVos913j/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
+    const EXPECTED_BACKEND_VERSION = "2026.07.30-auth-v3";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
+    let backendReady = false;
     let currentUser = null;
     let currentQuote = null;
     let orderPoller = null;
@@ -268,6 +270,7 @@
 
     $("loginForm").addEventListener("submit", async event => {
       event.preventDefault(); alertBox("authAlert", "");
+      if (!backendReady) return alertBox("authAlert", "Backend ยังเป็นเวอร์ชันเก่า กรุณา Deploy Code.gs เวอร์ชันใหม่และตรวจ API_URL");
       const button = $("loginButton"); setBusy(button, true, "กำลังเข้าสู่ระบบ...");
       try {
         const result = await api("loginUser", { username: $("loginUsername").value.trim(), password: $("loginPassword").value });
@@ -275,13 +278,14 @@
           if (result.needsPasswordSetup) { $("registerUsername").value = $("loginUsername").value.trim(); switchAuth("register"); }
           throw new Error(result.message || "เข้าสู่ระบบไม่สำเร็จ");
         }
-        acceptSession(result);
+        await acceptSession(result);
       } catch (error) { alertBox("authAlert", error.message); }
       finally { setBusy(button, false); }
     });
 
     $("registerForm").addEventListener("submit", async event => {
       event.preventDefault(); alertBox("authAlert", "");
+      if (!backendReady) return alertBox("authAlert", "Backend ยังเป็นเวอร์ชันเก่า กรุณา Deploy Code.gs เวอร์ชันใหม่และตรวจ API_URL");
       const button = $("registerButton"); setBusy(button, true, "กำลังสร้างบัญชี...");
       try {
         const result = await api("registerUser", {
@@ -291,14 +295,27 @@
           confirmPassword: $("confirmPassword").value
         });
         if (!result.success) throw new Error(result.message || "สมัครสมาชิกไม่สำเร็จ");
-        acceptSession(result); toast("สมัครสมาชิกเรียบร้อย");
+        await acceptSession(result); toast("สมัครสมาชิกเรียบร้อย");
       } catch (error) { alertBox("authAlert", error.message); }
       finally { setBusy(button, false); }
     });
 
-    function acceptSession(result) {
-      sessionToken = result.token; localStorage.setItem(STORAGE_TOKEN, sessionToken);
-      currentUser = result.user; localStorage.setItem("username", currentUser.username); localStorage.setItem("mailly_remembered_user", currentUser.username);
+    async function acceptSession(result) {
+      sessionToken = String(result.token || "");
+      if (!sessionToken) throw new Error("ระบบไม่ได้รับ Session กรุณาลองใหม่");
+
+      localStorage.setItem(STORAGE_TOKEN, sessionToken);
+
+      const verified = await api("getSessionUser");
+      if (!verified.success || !verified.user) {
+        sessionToken = "";
+        localStorage.removeItem(STORAGE_TOKEN);
+        throw new Error(verified.message || "ตรวจสอบ Session ไม่สำเร็จ กรุณาลองใหม่");
+      }
+
+      currentUser = verified.user;
+      localStorage.setItem("username", currentUser.username);
+      localStorage.setItem("mailly_remembered_user", currentUser.username);
       renderApp();
     }
 
@@ -402,13 +419,27 @@
     $("refreshOrders").addEventListener("click", loadOrders);
     $("copyUserButton").addEventListener("click", () => navigator.clipboard.writeText(currentUser.username).then(() => toast("คัดลอก Username แล้ว")));
 
+    async function checkBackend() {
+      const result = await api("healthCheck");
+      if (!result.success || result.version !== EXPECTED_BACKEND_VERSION) {
+        throw new Error(
+          "หน้าเว็บกำลังเชื่อมกับ Apps Script เวอร์ชันเก่า กรุณา Deploy Code.gs ใหม่ แล้วนำ URL /exec ที่ถูกต้องมาใส่ใน index.html และ shared.js"
+        );
+      }
+      backendReady = true;
+    }
+
     (async function boot() {
-      if (!sessionToken) return showAuth();
       try {
+        await checkBackend();
+        if (!sessionToken) return showAuth();
         const result = await api("getSessionUser");
         if (!result.success) throw new Error();
         currentUser = result.user; renderApp();
-      } catch (_) { logout(false); }
+      } catch (error) {
+        await logout(false);
+        alertBox("authAlert", error.message || "เชื่อมต่อ Backend ไม่สำเร็จ");
+      }
     })();
   </script>
 </body>

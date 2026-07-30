@@ -1,4 +1,5 @@
-const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbwGFdUowXZNnlomFjfcrnEMVf9hbYKjsi1wVQt938VgaKz8RbbrgKILxD9rbVos913j/exec";
+const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
+const MAILLY_BACKEND_VERSION = "2026.07.30-auth-v3";
 const MAILLY_TOKEN_KEY = "mailly_session_token";
 
 const Mailly = {
@@ -26,6 +27,12 @@ const Mailly = {
     if (!this.token) {
       location.href = "index.html";
       throw new Error("กรุณาเข้าสู่ระบบ");
+    }
+    const health = await this.api("healthCheck");
+    if (!health.success || health.version !== MAILLY_BACKEND_VERSION) {
+      this.clearSession();
+      location.href = "index.html";
+      throw new Error("Backend เป็นเวอร์ชันเก่า กรุณาอัปเดต Apps Script");
     }
     const result = await this.api("getSessionUser");
     if (!result.success) throw new Error(result.message || "ไม่สามารถตรวจสอบบัญชีได้");
