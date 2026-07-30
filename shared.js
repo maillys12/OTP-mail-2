@@ -1,5 +1,5 @@
-const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbzCUUoTImQeldpbSHD7-eZ2VCBjgsc28YL-jt83egadmWChrzOlXbDxTO7NZk9fdLam/exec";
-const MAILLY_BACKEND_VERSION = "2026.07.30-auth-v3";
+const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
+const MAILLY_BACKEND_VERSION = "2026.07.30-country-v4";
 const MAILLY_TOKEN_KEY = "mailly_session_token";
 const MAILLY_CACHE_PREFIX = "mailly_cache_";
 const MAILLY_SAVED_TOKEN = localStorage.getItem(MAILLY_TOKEN_KEY) || "";

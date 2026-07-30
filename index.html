@@ -12,8 +12,8 @@
   <link rel="prefetch" href="page2.html">
   <link rel="prefetch" href="shop.html">
   <link rel="prefetch" href="youtube.html">
-  <link rel="prefetch" href="shared.css?v=20260730-cocoa1">
-  <link rel="prefetch" href="shared.js?v=20260730-cocoa1">
+  <link rel="prefetch" href="shared.css?v=20260730-country2">
+  <link rel="prefetch" href="shared.js?v=20260730-country2">
   <style>
     :root{--ink:#172033;--muted:#6f7787;--line:#e8ebf0;--soft:#f6f7f9;--white:#fff;--orange:#ff7a1a;--orange-dark:#e86408;--orange-soft:#fff3e9;--green:#15a66a;--red:#e5484d;--shadow:0 24px 60px rgba(18,27,44,.09)}
     *{box-sizing:border-box}
@@ -154,6 +154,11 @@
     .search-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#927e8b}
     .service-search{width:100%;height:48px;padding:0 16px 0 43px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(8,5,8,.35);color:#fff;outline:0}
     .service-search:focus{border-color:var(--orange);box-shadow:0 0 0 4px var(--orange-soft)}
+    .country-picker{width:min(355px,40%);height:50px;display:flex;align-items:center;gap:11px;padding:0 15px;border:1px solid rgba(255,112,26,.38);border-radius:14px;background:rgba(255,107,26,.08);color:#ff9d61}
+    .country-picker select{min-width:0;flex:1;border:0;background:transparent;color:#fff;outline:0;font-weight:700;appearance:none}
+    .country-picker select option{background:#241722;color:#fff}
+    .country-picker .fa-chevron-down{font-size:10px;color:#a996a2}
+    .browser-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-3px 0 18px;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,.07)}
     .service-count{color:var(--muted);font-size:11px;white-space:nowrap}
     .service-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
     .service-card{position:relative;min-width:0;aspect-ratio:1/.98;padding:19px 14px 16px;border:1px solid rgba(255,128,55,.22);border-radius:19px;background:linear-gradient(150deg,#382131,#251721);color:#fff;box-shadow:inset 0 0 24px rgba(255,104,26,.04),0 15px 35px rgba(0,0,0,.18);transition:.22s}
@@ -171,7 +176,24 @@
     .dialog-logo{width:56px;height:56px;flex:0 0 auto;border-radius:17px;display:grid;place-items:center;background:#fff;color:#2a1725;font-size:26px}
     .dialog-head h2{margin:0 0 3px;font-size:19px}.dialog-head p{margin:0;color:var(--muted);font-size:10px}
     .dialog-close{margin-left:auto;width:38px;height:38px;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:rgba(255,255,255,.04);color:#fff}
+    .selected-country{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 15px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(8,5,8,.28);font-size:11px}
+    .selected-country span{color:var(--muted)}.selected-country span i{margin-right:6px;color:#ff9b5b}.selected-country strong{font-size:12px}
     .quote{background:rgba(8,5,8,.32);border:1px solid rgba(255,255,255,.07)}.quote strong{color:#ff9b5b}
+    .recent-orders-card{grid-column:1/-1;overflow:hidden}
+    .recent-head{display:flex;align-items:center;justify-content:space-between;padding:17px 20px 11px}
+    .recent-head>div{display:flex;align-items:center;gap:9px}.recent-head>div i{color:var(--orange)}.recent-head strong{font-size:14px}
+    .recent-head>span{display:flex;align-items:center;gap:6px;color:var(--green);font:700 10px Inter,sans-serif;letter-spacing:.6px}.recent-head>span i{font-size:7px}
+    .recent-viewport{width:100%;overflow:hidden;padding:3px 0 18px;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent)}
+    .recent-track{display:flex;width:max-content;will-change:transform}
+    .recent-track.moving{animation:recentScroll var(--recent-duration,45s) linear infinite}
+    .recent-track:hover{animation-play-state:paused}
+    .recent-group{display:flex;gap:11px;padding-right:11px}
+    .recent-item{width:220px;flex:0 0 220px;padding:13px 14px;border:1px solid rgba(255,255,255,.08);border-radius:15px;background:rgba(255,255,255,.035)}
+    .recent-service{display:flex;align-items:center;gap:9px;margin-bottom:9px}.recent-mini-logo{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:#fff;color:#251721;font-size:15px}.recent-service strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+    .recent-phone{font:700 12px Inter,sans-serif;letter-spacing:.7px;color:#d8cbd3}
+    .recent-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}.recent-price{font:800 12px Inter,sans-serif;color:#ff9b5b}.recent-time{color:var(--muted);font-size:9px}
+    .recent-placeholder{width:100vw;max-width:1180px;padding:24px;text-align:center;color:var(--muted);font-size:11px}
+    @keyframes recentScroll{to{transform:translateX(-50%)}}
     .orders-card{grid-column:1/-1}.order{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
     .small-btn{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#d9cad2}
     .toast{background:#ff6818;color:#fff}
@@ -181,7 +203,7 @@
       .app-nav a{flex:1;padding:9px 5px;text-align:center;font-size:10px}
       .service-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     }
-    @media(max-width:650px){.service-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.service-logo{width:62px;height:62px;font-size:29px}.service-card{padding:15px 10px 13px}.otp-toolbar{align-items:stretch;flex-direction:column}.search-wrap{max-width:none}.service-count{text-align:right}}
+    @media(max-width:650px){.service-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.service-logo{width:62px;height:62px;font-size:29px}.service-card{padding:15px 10px 13px}.otp-toolbar{align-items:stretch;flex-direction:column}.search-wrap{max-width:none}.country-picker{width:100%}.service-count{text-align:right}.recent-item{width:185px;flex-basis:185px}}
     @media(max-width:420px){.service-grid{gap:10px}.price-tag{padding:7px 8px;font-size:10px}.service-name{font-size:11px;letter-spacing:.3px}.service-logo{margin-top:13px;margin-bottom:13px}}
   </style>
 </head>
@@ -258,14 +280,33 @@
       </div>
 
       <div class="grid">
+        <article class="card recent-orders-card">
+          <div class="recent-head">
+            <div><i class="fa-solid fa-fire-flame-curved"></i><strong>รายการสั่งซื้อล่าสุด</strong></div>
+            <span><i class="fa-solid fa-circle"></i> LIVE</span>
+          </div>
+          <div class="recent-viewport">
+            <div id="recentOrdersTrack" class="recent-track">
+              <div class="recent-placeholder">กำลังอัปเดตรายการล่าสุด...</div>
+            </div>
+          </div>
+        </article>
+
         <article class="card otp-browser">
-          <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-grid-2"></i></span> เลือกแอปที่ต้องการรับ OTP</h2><p>แตะการ์ดแอป แล้วเลือกประเทศและตรวจสอบราคาก่อนซื้อ</p></div>
+          <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-grid-2"></i></span> เลือกแอปที่ต้องการรับ OTP</h2><p>เลือกประเทศด้านบน แล้วแตะการ์ดแอปเพื่อตรวจสอบราคาจริงก่อนซื้อ</p></div>
           <div class="card-body">
             <div id="purchaseAlert" class="alert"></div>
             <div class="otp-toolbar">
               <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="serviceSearch" class="service-search" type="search" placeholder="ค้นหาแอป เช่น Google, Discord, TikTok" autocomplete="off"></div>
-              <div id="serviceCount" class="service-count">กำลังเตรียมรายการ...</div>
+              <label class="country-picker" for="globalCountry">
+                <i class="fa-solid fa-earth-asia"></i>
+                <select id="globalCountry" aria-label="เลือกประเทศ">
+                  <option value="52" selected>🇹🇭 Thailand (52)</option>
+                </select>
+                <i class="fa-solid fa-chevron-down"></i>
+              </label>
             </div>
+            <div class="browser-meta"><span class="status-pill"><span class="dot"></span> ระบบออนไลน์</span><span id="serviceCount" class="service-count">กำลังเตรียมรายการ...</span></div>
             <div id="serviceGrid" class="service-grid">
               <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
             </div>
@@ -284,10 +325,10 @@
     <div class="otp-dialog">
       <div class="dialog-head">
         <div id="selectedServiceLogo" class="dialog-logo"><i class="fa-solid fa-mobile-screen-button"></i></div>
-        <div><h2 id="selectedServiceName">เลือกประเทศ</h2><p>ราคาจะแสดงหลังเลือกประเทศ</p></div>
+        <div><h2 id="selectedServiceName">บริการ OTP</h2><p>กำลังตรวจสอบราคาสำหรับประเทศที่เลือก</p></div>
         <button id="closeOtpModal" class="dialog-close" type="button" aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="field"><label for="countrySelect">ประเทศที่ต้องการรับหมายเลข</label><select id="countrySelect" class="select" disabled><option value="">กำลังโหลดประเทศ...</option></select></div>
+      <div class="selected-country"><span><i class="fa-solid fa-earth-asia"></i> ประเทศที่เลือก</span><strong id="selectedCountryName">🇹🇭 Thailand (52)</strong></div>
       <div class="quote"><span>ราคาที่ต้องชำระ</span><strong><span id="quotePrice">—</span> ฿</strong></div>
       <button id="buyButton" class="primary buy" disabled><i class="fa-solid fa-bolt"></i> ซื้อหมายเลข OTP</button>
       <div id="modalAlert" class="alert" style="margin-top:14px;margin-bottom:0"></div>
@@ -297,8 +338,8 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzCUUoTImQeldpbSHD7-eZ2VCBjgsc28YL-jt83egadmWChrzOlXbDxTO7NZk9fdLam/exec";
-    const EXPECTED_BACKEND_VERSION = "2026.07.30-auth-v3";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
+    const EXPECTED_BACKEND_VERSION = "2026.07.30-country-v4";
     const STORAGE_TOKEN = "mailly_session_token";
     const CACHE_PREFIX = "mailly_cache_";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
@@ -307,7 +348,11 @@
     let currentQuote = null;
     let selectedService = null;
     let allServices = [];
+    let serviceRenderToken = 0;
+    let countryCatalog = [];
+    let selectedCountryId = localStorage.getItem("mailly_country_id") || "52";
     let orderPoller = null;
+    let recentPoller = null;
 
     const $ = id => document.getElementById(id);
     function readCache(key) {
@@ -424,8 +469,9 @@
     function renderApp() {
       hide("loadingScreen"); hide("authScreen"); show("appScreen");
       renderUserSummary();
-      loadServices(); loadOrders();
+      loadCountryCatalog(); loadServices(); loadOrders(); loadRecentOrders();
       clearInterval(orderPoller); orderPoller = setInterval(loadOrders, 7000);
+      clearInterval(recentPoller); recentPoller = setInterval(loadRecentOrders, 30000);
       clearTimeout(renderApp._prefetchTimer);
       renderApp._prefetchTimer = setTimeout(prefetchSecondaryPages, 100);
     }
@@ -444,9 +490,68 @@
     async function logout(callApi = true) {
       if (callApi && sessionToken) { try { await api("logoutUser"); } catch (_) {} }
       sessionToken = ""; currentUser = null; localStorage.removeItem(STORAGE_TOKEN); clearMaillyCache();
-      clearInterval(orderPoller); showAuth();
+      clearInterval(orderPoller); clearInterval(recentPoller); showAuth();
     }
     $("logoutButton").addEventListener("click", () => logout(true));
+
+    function flagEmoji(code) {
+      const value = String(code || "").trim().toUpperCase();
+      if (!/^[A-Z]{2}$/.test(value)) return "🌐";
+      return String.fromCodePoint(...[...value].map(char => 127397 + char.charCodeAt(0)));
+    }
+
+    function normalizeCountries(data) {
+      const raw = Array.isArray(data) ? data : Object.values(data || {}).filter(item => item && typeof item === "object");
+      return raw.map(item => ({
+        id: item.country_id ?? item.ID ?? item.id,
+        name: item.name ?? item.country_name ?? item.country ?? item.title,
+        code: item.short_name ?? item.code ?? item.iso ?? item.iso2 ?? ""
+      })).filter(item => item.id !== undefined && item.id !== null && item.name);
+    }
+
+    function countryLabel(country) {
+      if (!country) return selectedCountryId === "52" ? "🇹🇭 Thailand (52)" : `🌐 ประเทศ ${selectedCountryId}`;
+      const isThailand = String(country.id) === "52" || /thailand|ไทย/i.test(country.name);
+      return `${isThailand ? "🇹🇭" : flagEmoji(country.code)} ${country.name} (${country.id})`;
+    }
+
+    function renderCountryCatalog(items) {
+      countryCatalog = items.slice().sort((a, b) => {
+        if (String(a.id) === "52") return -1;
+        if (String(b.id) === "52") return 1;
+        return String(a.name).localeCompare(String(b.name));
+      });
+      if (!countryCatalog.some(item => String(item.id) === "52")) {
+        countryCatalog.unshift({ id: "52", name: "Thailand", code: "TH" });
+      }
+      const select = $("globalCountry");
+      select.innerHTML = countryCatalog.map(country =>
+        `<option value="${escapeHtml(country.id)}">${escapeHtml(countryLabel(country))}</option>`
+      ).join("");
+      if (!countryCatalog.some(item => String(item.id) === String(selectedCountryId))) selectedCountryId = "52";
+      select.value = selectedCountryId;
+    }
+
+    async function loadCountryCatalog() {
+      const cached = readCache(userCacheKey("country_catalog"));
+      if (cached) renderCountryCatalog(cached);
+      try {
+        const result = await api("getCountryCatalog");
+        if (!result.success) throw new Error(result.message || "โหลดรายชื่อประเทศไม่สำเร็จ");
+        const items = normalizeCountries(result.countries || []);
+        writeCache(userCacheKey("country_catalog"), items);
+        renderCountryCatalog(items);
+      } catch (_) {
+        if (!countryCatalog.length) renderCountryCatalog([{ id: "52", name: "Thailand", code: "TH" }]);
+      }
+    }
+
+    $("globalCountry").addEventListener("change", event => {
+      selectedCountryId = String(event.target.value || "52");
+      localStorage.setItem("mailly_country_id", selectedCountryId);
+      const selected = countryCatalog.find(item => String(item.id) === selectedCountryId);
+      toast("เลือก " + countryLabel(selected));
+    });
 
     function serviceVisual(name) {
       const text = String(name || "").toLowerCase();
@@ -472,12 +577,33 @@
         ["vk", "fa-brands fa-vk", "#2787f5", "#ffffff"],
         ["netflix", "fa-solid fa-n", "#090909", "#e50914"],
         ["roblox", "fa-solid fa-cube", "#111111", "#ffffff"],
+        ["truewallet", "fa-solid fa-wallet", "#ffffff", "#f28b20"],
+        ["truemoney", "fa-solid fa-wallet", "#ffffff", "#f28b20"],
         ["lazada", "fa-solid fa-bag-shopping", "#24108f", "#ff8b3d"],
         ["shopee", "fa-solid fa-bag-shopping", "#ee4d2d", "#ffffff"],
         ["grab", "fa-solid fa-car", "#00b14f", "#ffffff"],
         ["foodpanda", "fa-solid fa-paw", "#d70f64", "#ffffff"],
-        ["nike", "fa-solid fa-check", "#050505", "#ffffff"],
+        ["lalamove", "fa-solid fa-truck-fast", "#f16622", "#ffffff"],
+        ["gnjoy", "fa-solid fa-gamepad", "#ffffff", "#d8242f"],
+        ["tinder", "fa-solid fa-fire-flame-curved", "#ff4458", "#ffffff"],
+        ["twitch", "fa-brands fa-twitch", "#9146ff", "#ffffff"],
+        ["openai", "fa-solid fa-brain", "#ffffff", "#111111"],
+        ["chatgpt", "fa-solid fa-brain", "#ffffff", "#111111"],
+        ["bilibili", "fa-solid fa-tv", "#00aeec", "#ffffff"],
+        ["tencent", "fa-brands fa-qq", "#ffffff", "#111111"],
+        ["qq", "fa-brands fa-qq", "#ffffff", "#111111"],
+        ["yahoo", "fa-brands fa-yahoo", "#ffffff", "#6001d2"],
+        ["manus", "fa-solid fa-hand", "#ffffff", "#111111"],
+        ["shopback", "fa-solid fa-bag-shopping", "#111111", "#ff3b30"],
+        ["kimi", "fa-solid fa-k", "#111111", "#ffffff"],
+        ["aisplay", "fa-solid fa-play", "#111111", "#d4ff45"],
+        ["ais play", "fa-solid fa-play", "#111111", "#d4ff45"],
+        ["shein", "fa-solid fa-s", "#111111", "#ffffff"],
+        ["binance", "fa-solid fa-coins", "#1e2026", "#f3ba2f"],
+        ["kwai", "fa-solid fa-video", "#ff4b0b", "#ffffff"],
+        ["amaze", "fa-brands fa-app-store-ios", "#2487f6", "#ffffff"],
         ["7-eleven", "fa-solid fa-store", "#ffffff", "#ef3123"],
+        ["nike", "fa-solid fa-check", "#050505", "#ffffff"],
         ["lotus", "fa-solid fa-leaf", "#00b9a9", "#ffffff"]
       ];
       const found = brands.find(item => text.includes(item[0]));
@@ -486,14 +612,64 @@
 
     function normalizeServices(data) {
       const raw = Array.isArray(data) ? data : Object.values(data || {}).filter(x => x && typeof x === "object");
+      const priority = [
+        ["facebook"],
+        ["google", "gmail", "youtube"],
+        ["microsoft"],
+        ["truewallet", "truemoney"],
+        ["lazada"],
+        ["shopee"],
+        ["line"],
+        ["telegram"],
+        ["instagram"],
+        ["amaze", "app store"],
+        ["tiktok"],
+        ["any", "acu", "disney", "mcdonald"],
+        ["lalamove"],
+        ["7-eleven", "7 eleven"],
+        ["gnjoy"],
+        ["roblox"],
+        ["netflix"],
+        ["tinder"],
+        ["discord"],
+        ["apple"],
+        ["wechat"],
+        ["twitch"],
+        ["openai", "chatgpt"],
+        ["bilibili"],
+        ["tencent", "qq"],
+        ["yahoo"],
+        ["lotus"],
+        ["manus"],
+        ["shopback"],
+        ["kimi"],
+        ["aisplay", "ais play"],
+        ["shein"],
+        ["binance"],
+        ["kwai"]
+      ];
+      const rank = name => {
+        const value = String(name || "").toLowerCase();
+        const matches = keyword => {
+          if (keyword.length > 3 && keyword !== "line") return value.includes(keyword);
+          const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, "i").test(value);
+        };
+        const index = priority.findIndex(group => group.some(matches));
+        return index === -1 ? priority.length : index;
+      };
       return raw.map(item => ({
         id: item.ID ?? item.id ?? item.service_id ?? item.service,
         name: item.name ?? item.service_name ?? item.title ?? item.ID ?? item.id
-      })).filter(item => item.id && item.name).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      })).filter(item => item.id && item.name).sort((a, b) => {
+        const rankDifference = rank(a.name) - rank(b.name);
+        return rankDifference || String(a.name).localeCompare(String(b.name));
+      });
     }
 
     function renderServices(items) {
       allServices = items;
+      const renderToken = ++serviceRenderToken;
       const query = $("serviceSearch").value.trim().toLowerCase();
       const visible = query ? items.filter(item => String(item.name).toLowerCase().includes(query)) : items;
       $("serviceCount").textContent = `${visible.length} แอป`;
@@ -501,8 +677,9 @@
         $("serviceGrid").innerHTML = `<div class="empty services-empty"><i class="fa-solid fa-magnifying-glass" style="display:block;font-size:24px;margin-bottom:10px"></i>ไม่พบแอปที่ค้นหา</div>`;
         return;
       }
-      $("serviceGrid").innerHTML = visible.map(item => {
-        const index = items.indexOf(item);
+      const indexByItem = new Map(items.map((item, index) => [item, index]));
+      const cardHtml = item => {
+        const index = indexByItem.get(item);
         const visual = serviceVisual(item.name);
         const logo = visual
           ? `<div class="service-logo" style="background:${visual.background};color:${visual.color}"><i class="${visual.icon}"></i></div>`
@@ -512,13 +689,31 @@
           ${logo}
           <span class="service-name">${escapeHtml(item.name)}</span>
         </button>`;
-      }).join("");
+      };
+      const grid = $("serviceGrid");
+      const firstBatchSize = query ? Math.min(visible.length, 120) : Math.min(visible.length, 60);
+      grid.innerHTML = visible.slice(0, firstBatchSize).map(cardHtml).join("");
+      let cursor = firstBatchSize;
+      const appendNextBatch = () => {
+        if (renderToken !== serviceRenderToken || cursor >= visible.length) return;
+        const next = visible.slice(cursor, cursor + 120);
+        grid.insertAdjacentHTML("beforeend", next.map(cardHtml).join(""));
+        cursor += next.length;
+        if (cursor < visible.length) {
+          if ("requestIdleCallback" in window) requestIdleCallback(appendNextBatch, { timeout: 500 });
+          else setTimeout(appendNextBatch, 20);
+        }
+      };
+      if (cursor < visible.length) {
+        if ("requestIdleCallback" in window) requestIdleCallback(appendNextBatch, { timeout: 500 });
+        else setTimeout(appendNextBatch, 20);
+      }
     }
 
     async function loadServices() {
       try {
         const cached = readCache(userCacheKey("otp_services"));
-        if (cached) renderServices(cached);
+        if (cached) renderServices(normalizeServices(cached));
         const data = await api("getServices");
         if (data && data.success === false) throw new Error(data.message || "โหลดรายการแอปไม่สำเร็จ");
         const items = normalizeServices(data);
@@ -541,27 +736,24 @@
       $("selectedServiceLogo").style.background = visual?.background || "linear-gradient(145deg,#ff9c5e,#ff5b0a)";
       $("selectedServiceLogo").style.color = visual?.color || "#fff";
       $("selectedServiceLogo").innerHTML = visual ? `<i class="${visual.icon}"></i>` : escapeHtml(String(selectedService.name).charAt(0).toUpperCase());
+      const selectedCountry = countryCatalog.find(item => String(item.id) === String(selectedCountryId));
+      $("selectedCountryName").textContent = countryLabel(selectedCountry);
       $("otpModal").classList.remove("hidden");
       document.body.style.overflow = "hidden";
 
-      const country = $("countrySelect");
-      country.disabled = true;
-      country.innerHTML = `<option value="">กำลังโหลดประเทศ...</option>`;
       try {
-        const cacheKey = userCacheKey(`otp_countries_${selectedService.id}`);
-        let items = readCache(cacheKey);
-        if (!items) {
-          const data = await api("getCountryDataForService", { serviceId: selectedService.id });
-          if (data && data.success === false) throw new Error(data.message || "โหลดประเทศไม่สำเร็จ");
-          items = Array.isArray(data) ? data : Object.keys(data || {}).map(id => ({ id, ...data[id] }));
-          writeCache(cacheKey, items);
-        }
-        const countries = items.filter(x => x.country_id || x.id).sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
-        country.innerHTML = `<option value="">เลือกประเทศ</option>` + countries.map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
-        country.disabled = false;
+        $("quotePrice").textContent = "...";
+        const result = await api("getPriceQuote", {
+          serviceId: selectedService.id,
+          countryId: selectedCountryId
+        });
+        if (!result.success) throw new Error(result.message || "แอปนี้ยังไม่มีหมายเลขสำหรับประเทศที่เลือก");
+        currentQuote = result.price;
+        $("quotePrice").textContent = Number(result.price).toFixed(2);
+        $("buyButton").disabled = false;
       } catch (error) {
-        country.innerHTML = `<option value="">โหลดประเทศไม่สำเร็จ</option>`;
-        alertBox("modalAlert", error.message || "โหลดประเทศไม่สำเร็จ");
+        $("quotePrice").textContent = "—";
+        alertBox("modalAlert", error.message || "แอปนี้ยังไม่มีหมายเลขสำหรับประเทศที่เลือก");
       }
     }
 
@@ -585,28 +777,79 @@
       if (event.key === "Escape" && !$("otpModal").classList.contains("hidden")) closeOtpModal();
     });
 
-    $("countrySelect").addEventListener("change", async event => {
-      currentQuote = null; $("quotePrice").textContent = "—"; $("buyButton").disabled = true;
-      alertBox("modalAlert", "");
-      if (!event.target.value || !selectedService) return;
-      const result = await api("getPriceQuote", { serviceId: selectedService.id, countryId: event.target.value });
-      if (!result.success) return alertBox("modalAlert", result.message);
-      currentQuote = result.price; $("quotePrice").textContent = Number(result.price).toFixed(2); $("buyButton").disabled = false;
-    });
-
     $("buyButton").addEventListener("click", async () => {
       if (!currentQuote || !selectedService) return;
       alertBox("modalAlert", "");
       const button = $("buyButton"); setBusy(button, true, "กำลังซื้อหมายเลข...");
       try {
-        const result = await api("buyNumberWithCredit", { serviceId: selectedService.id, countryId: $("countrySelect").value });
+        const result = await api("buyNumberWithCredit", {
+          serviceId: selectedService.id,
+          serviceName: selectedService.name,
+          countryId: selectedCountryId
+        });
         if (!result.success) throw new Error(result.message || "ซื้อหมายเลขไม่สำเร็จ");
         currentUser.balance = result.newCredit; saveCurrentUser(); $("balance").textContent = Number(result.newCredit).toFixed(2) + " ฿";
         closeOtpModal();
-        toast("ซื้อหมายเลขสำเร็จ"); await loadOrders();
+        toast("ซื้อหมายเลขสำเร็จ");
+        await Promise.all([loadOrders(), loadRecentOrders()]);
       } catch (error) { alertBox("modalAlert", error.message); }
       finally { setBusy(button, false); }
     });
+
+    function relativeTime(value) {
+      const date = new Date(String(value || "").replace(" ", "T"));
+      if (Number.isNaN(date.getTime())) return "ล่าสุด";
+      const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+      if (seconds < 60) return "เมื่อสักครู่";
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours} ชั่วโมงที่แล้ว`;
+      return `${Math.floor(hours / 24)} วันที่แล้ว`;
+    }
+
+    function renderRecentOrders(items) {
+      const track = $("recentOrdersTrack");
+      if (!items.length) {
+        track.className = "recent-track";
+        track.innerHTML = `<div class="recent-placeholder">ยังไม่มีรายการสั่งซื้อในระบบ</div>`;
+        return;
+      }
+      const cards = items.map(item => {
+        const visual = serviceVisual(item.service);
+        const logo = visual
+          ? `<span class="recent-mini-logo" style="background:${visual.background};color:${visual.color}"><i class="${visual.icon}"></i></span>`
+          : `<span class="recent-mini-logo">${escapeHtml(String(item.service || "O").charAt(0).toUpperCase())}</span>`;
+        return `<article class="recent-item">
+          <div class="recent-service">${logo}<strong>${escapeHtml(item.service || "OTP Service")}</strong></div>
+          <div class="recent-phone">${escapeHtml(item.phone || "••••••")}</div>
+          <div class="recent-foot"><span class="recent-price">${Number(item.price || 0).toFixed(2)} ฿</span><span class="recent-time">${escapeHtml(relativeTime(item.createdAt))}</span></div>
+        </article>`;
+      }).join("");
+      const group = `<div class="recent-group">${cards}</div>`;
+      track.className = "recent-track";
+      track.innerHTML = group + group;
+      track.style.setProperty("--recent-duration", `${Math.max(30, items.length * 4)}s`);
+      requestAnimationFrame(() => track.classList.add("moving"));
+    }
+
+    async function loadRecentOrders() {
+      const cached = readCache(userCacheKey("otp_recent_orders"));
+      if (cached && !$("recentOrdersTrack").dataset.loaded) {
+        renderRecentOrders(cached);
+        $("recentOrdersTrack").dataset.loaded = "1";
+      }
+      try {
+        const result = await api("getRecentOrders");
+        if (!result.success) throw new Error(result.message || "โหลดรายการล่าสุดไม่สำเร็จ");
+        const items = result.orders || [];
+        writeCache(userCacheKey("otp_recent_orders"), items);
+        if (!cached || JSON.stringify(items) !== JSON.stringify(cached)) {
+          renderRecentOrders(items);
+          $("recentOrdersTrack").dataset.loaded = "1";
+        }
+      } catch (_) {}
+    }
 
     async function loadOrders() {
       if (!sessionToken) return;
