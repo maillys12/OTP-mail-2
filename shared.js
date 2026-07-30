@@ -1,10 +1,52 @@
-const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbxNjUZEH_e-ulJZwRyrfbtMItsYM15CjwtfOPZ6POG9Xa1WEiQcuYp2lLGKqt-dPMs5/exec";
+const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
 const MAILLY_BACKEND_VERSION = "2026.07.30-auth-v3";
 const MAILLY_TOKEN_KEY = "mailly_session_token";
+const MAILLY_CACHE_PREFIX = "mailly_cache_";
+const MAILLY_SAVED_TOKEN = localStorage.getItem(MAILLY_TOKEN_KEY) || "";
+
+function readMaillyCache(key, maxAge = 0) {
+  try {
+    const cached = JSON.parse(localStorage.getItem(key) || "null");
+    if (!cached || !Object.prototype.hasOwnProperty.call(cached, "data")) return null;
+    if (maxAge && Date.now() - Number(cached.savedAt || 0) > maxAge) return null;
+    return cached.data;
+  } catch (_) {
+    return null;
+  }
+}
 
 const Mailly = {
-  token: localStorage.getItem(MAILLY_TOKEN_KEY) || "",
-  user: null,
+  token: MAILLY_SAVED_TOKEN,
+  user: MAILLY_SAVED_TOKEN ? readMaillyCache(MAILLY_CACHE_PREFIX + "user") : null,
+
+  cacheKey(name) {
+    const username = String(this.user?.username || "guest").toLowerCase();
+    return `${MAILLY_CACHE_PREFIX}${username}_${name}`;
+  },
+
+  getCache(name, maxAge = 0) {
+    return readMaillyCache(this.cacheKey(name), maxAge);
+  },
+
+  setCache(name, data) {
+    try {
+      localStorage.setItem(this.cacheKey(name), JSON.stringify({ savedAt: Date.now(), data }));
+    } catch (_) {}
+    return data;
+  },
+
+  setUser(user) {
+    this.user = user || null;
+    try {
+      if (this.user) {
+        localStorage.setItem(MAILLY_CACHE_PREFIX + "user", JSON.stringify({ savedAt: Date.now(), data: this.user }));
+      } else {
+        localStorage.removeItem(MAILLY_CACHE_PREFIX + "user");
+      }
+    } catch (_) {}
+    this.renderAccount();
+    return this.user;
+  },
 
   async api(action, payload = {}) {
     const response = await fetch(MAILLY_API_URL, {
@@ -28,20 +70,22 @@ const Mailly = {
       location.href = "index.html";
       throw new Error("กรุณาเข้าสู่ระบบ");
     }
-    const health = await this.api("healthCheck");
-    if (!health.success || health.version !== MAILLY_BACKEND_VERSION) {
-      this.clearSession();
-      location.href = "index.html";
-      throw new Error("Backend เป็นเวอร์ชันเก่า กรุณาอัปเดต Apps Script");
+    if (this.user) {
+      this.renderAccount();
+      void this.refreshUser().catch(() => {});
+      return this.user;
     }
+    return this.refreshUser();
+  },
+
+  async refreshUser() {
     const result = await this.api("getSessionUser");
-    if (!result.success) throw new Error(result.message || "ไม่สามารถตรวจสอบบัญชีได้");
-    this.user = result.user;
-    this.renderAccount();
-    return this.user;
+    if (!result.success || !result.user) throw new Error(result.message || "ไม่สามารถตรวจสอบบัญชีได้");
+    return this.setUser(result.user);
   },
 
   renderAccount() {
+    if (!this.user) return;
     const username = document.querySelector("[data-mailly-username]");
     const avatar = document.querySelector("[data-mailly-avatar]");
     const balance = document.querySelector("[data-mailly-balance]");
@@ -52,13 +96,16 @@ const Mailly = {
 
   setBalance(value) {
     if (this.user) this.user.balance = Number(value) || 0;
-    this.renderAccount();
+    this.setUser(this.user);
   },
 
   clearSession() {
     this.token = "";
     this.user = null;
     localStorage.removeItem(MAILLY_TOKEN_KEY);
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(MAILLY_CACHE_PREFIX)) localStorage.removeItem(key);
+    });
   },
 
   escape(value) {
@@ -67,3 +114,5 @@ const Mailly = {
     })[c]);
   }
 };
+
+Mailly.renderAccount();

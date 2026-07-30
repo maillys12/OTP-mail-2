@@ -3,12 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#160d17">
   <title>Mailly OTP — รับรหัส OTP ออนไลน์</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="prefetch" href="page2.html">
+  <link rel="prefetch" href="shop.html">
+  <link rel="prefetch" href="youtube.html">
+  <link rel="prefetch" href="shared.css?v=20260730-cocoa1">
+  <link rel="prefetch" href="shared.js?v=20260730-cocoa1">
   <style>
     :root{--ink:#172033;--muted:#6f7787;--line:#e8ebf0;--soft:#f6f7f9;--white:#fff;--orange:#ff7a1a;--orange-dark:#e86408;--orange-soft:#fff3e9;--green:#15a66a;--red:#e5484d;--shadow:0 24px 60px rgba(18,27,44,.09)}
     *{box-sizing:border-box}
@@ -116,6 +121,68 @@
     .toast.show{opacity:1;transform:none}
     @media(max-width:880px){.auth-shell{grid-template-columns:1fr}.brand-panel{display:none}.auth-panel{border:0;padding:28px 22px}.mobile-logo{display:flex}.grid{grid-template-columns:1fr}.orders-card{grid-column:auto}.welcome{align-items:start;flex-direction:column}.topbar{padding:0 18px}.user-button span{display:none}.order{grid-template-columns:1fr 1fr}.order-actions{grid-column:1/-1}.form-grid{grid-template-columns:1fr}}
     @media(max-width:520px){.balance-chip span{display:none}.main{width:min(100% - 24px,1180px);margin-top:22px}.card-head,.card-body{padding-left:17px;padding-right:17px}.order{grid-template-columns:1fr}.order-actions{grid-column:auto}.mini-links{grid-template-columns:1fr}}
+
+    /* Dark Cocoa redesign */
+    :root{--ink:#fff8f2;--muted:#b9aab4;--line:rgba(255,136,62,.18);--soft:#241722;--white:#241722;--orange:#ff6b1a;--orange-dark:#ff8b3d;--orange-soft:rgba(255,107,26,.12);--green:#46d79b;--red:#ff6672;--shadow:0 24px 70px rgba(0,0,0,.36)}
+    body{background:radial-gradient(circle at 8% 0%,rgba(255,91,20,.13),transparent 30rem),radial-gradient(circle at 92% 35%,rgba(127,34,85,.16),transparent 34rem),linear-gradient(145deg,#0f0911,#160d17);color:var(--ink)}
+    .loading-screen{background:#120a12}
+    .auth-shell{background:#120a12}
+    .brand-panel{background:radial-gradient(circle at 70% 10%,rgba(255,102,26,.2),transparent 25rem),linear-gradient(145deg,#251522,#160d17)}
+    .brand-panel:before{background:rgba(255,92,20,.13)}.brand-panel:after{background:rgba(135,40,87,.14)}
+    .brand-foot,.subtext,.hero p{color:var(--muted)}
+    .eyebrow{border-color:rgba(255,128,54,.35);background:rgba(255,107,26,.08);color:#ff9a5b}
+    .benefits{color:#dacbd3}.auth-panel{background:rgba(12,7,12,.55);border-color:var(--line)}
+    .tabs{background:rgba(255,255,255,.045)}.tab{color:var(--muted)}.tab.active{background:#342031;color:#fff;box-shadow:0 7px 20px rgba(0,0,0,.25)}
+    .field label{color:#e6d7df}.input,.select{border-color:rgba(255,255,255,.11);background:rgba(8,5,8,.38);color:#fff}
+    .select option{background:#241722;color:#fff}
+    .input::placeholder{color:#776873}.input:focus,.select:focus{border-color:var(--orange);box-shadow:0 0 0 4px var(--orange-soft)}
+    .legacy-note{background:var(--orange-soft);color:#ffc39c}.alert.error{color:#ff9ba3;background:rgba(255,68,82,.1);border-color:rgba(255,102,114,.22)}
+    .topbar{height:76px;background:rgba(19,11,18,.9);border-color:var(--line);backdrop-filter:blur(18px)}
+    .logo{color:#fff}.logo-mark{background:linear-gradient(145deg,#ff8b3d,#ff5c0a)}
+    .app-nav{display:flex;align-items:center;gap:5px}
+    .app-nav a{padding:9px 12px;border-radius:11px;color:var(--muted);text-decoration:none;font-size:11px;font-weight:600}
+    .app-nav a:hover,.app-nav a.active{background:var(--orange-soft);color:#ff9d61}
+    .balance-chip{border:1px solid var(--line);background:var(--orange-soft);color:#ffb27e}.balance-chip strong{color:#fff}
+    .user-button,.logout{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff}
+    .avatar{background:#382132;color:#ff9d61}.main{width:min(1220px,calc(100% - 36px));margin-top:38px}
+    .welcome h1{font-size:clamp(27px,3vw,36px)}.welcome p{color:var(--muted)}
+    .card{background:linear-gradient(145deg,rgba(49,29,44,.96),rgba(32,20,31,.98));border-color:var(--line);box-shadow:0 0 0 1px rgba(255,111,31,.08),0 16px 45px rgba(0,0,0,.2)}
+    .card-head{border-color:rgba(255,255,255,.07)}.icon-box{border:1px solid var(--line)}
+    .otp-browser{grid-column:1/-1}
+    .otp-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+    .search-wrap{position:relative;flex:1;max-width:460px}
+    .search-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#927e8b}
+    .service-search{width:100%;height:48px;padding:0 16px 0 43px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(8,5,8,.35);color:#fff;outline:0}
+    .service-search:focus{border-color:var(--orange);box-shadow:0 0 0 4px var(--orange-soft)}
+    .service-count{color:var(--muted);font-size:11px;white-space:nowrap}
+    .service-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+    .service-card{position:relative;min-width:0;aspect-ratio:1/.98;padding:19px 14px 16px;border:1px solid rgba(255,128,55,.22);border-radius:19px;background:linear-gradient(150deg,#382131,#251721);color:#fff;box-shadow:inset 0 0 24px rgba(255,104,26,.04),0 15px 35px rgba(0,0,0,.18);transition:.22s}
+    .service-card:hover{transform:translateY(-4px);border-color:rgba(255,113,28,.58);box-shadow:0 0 0 1px rgba(255,111,31,.16),0 18px 42px rgba(117,41,15,.28)}
+    .service-logo{width:76px;height:76px;margin:15px auto 17px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#fff,#eadfe5);color:#2a1725;font-size:35px;box-shadow:0 10px 28px rgba(0,0,0,.25)}
+    .service-logo.fallback{background:linear-gradient(145deg,#ff9c5e,#ff5b0a);color:#fff;font:800 28px Inter,sans-serif}
+    .service-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font:800 14px Inter,Prompt,sans-serif;letter-spacing:.7px;text-transform:uppercase}
+    .price-tag{position:absolute;right:-1px;top:-11px;display:flex;align-items:center;gap:7px;padding:9px 11px;border-radius:13px 13px 4px 13px;background:linear-gradient(135deg,#ff7d31,#ff5209);font:800 12px Inter,sans-serif;box-shadow:0 9px 20px rgba(255,75,0,.25)}
+    .price-tag i{font-size:11px}.services-empty{grid-column:1/-1}
+    .skeleton-card{aspect-ratio:1/.98;border:1px solid var(--line);border-radius:19px;background:linear-gradient(100deg,#251721 30%,#382131 50%,#251721 70%);background-size:200% 100%;animation:shimmer 1.2s infinite}
+    @keyframes shimmer{to{background-position:-200% 0}}
+    .otp-modal{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:18px;background:rgba(7,4,8,.78);backdrop-filter:blur(9px)}
+    .otp-dialog{width:min(500px,100%);padding:24px;border:1px solid rgba(255,112,26,.42);border-radius:23px;background:linear-gradient(150deg,#3a2234,#21141f);box-shadow:0 30px 100px rgba(0,0,0,.6)}
+    .dialog-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+    .dialog-logo{width:56px;height:56px;flex:0 0 auto;border-radius:17px;display:grid;place-items:center;background:#fff;color:#2a1725;font-size:26px}
+    .dialog-head h2{margin:0 0 3px;font-size:19px}.dialog-head p{margin:0;color:var(--muted);font-size:10px}
+    .dialog-close{margin-left:auto;width:38px;height:38px;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:rgba(255,255,255,.04);color:#fff}
+    .quote{background:rgba(8,5,8,.32);border:1px solid rgba(255,255,255,.07)}.quote strong{color:#ff9b5b}
+    .orders-card{grid-column:1/-1}.order{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
+    .small-btn{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#d9cad2}
+    .toast{background:#ff6818;color:#fff}
+    @media(max-width:920px){
+      #appScreen{padding-bottom:72px}
+      .app-nav{position:fixed;left:12px;right:12px;bottom:10px;z-index:60;display:flex;justify-content:center;gap:3px;padding:7px;border:1px solid var(--line);border-radius:16px;background:rgba(26,15,24,.94);box-shadow:0 16px 45px rgba(0,0,0,.42);backdrop-filter:blur(18px)}
+      .app-nav a{flex:1;padding:9px 5px;text-align:center;font-size:10px}
+      .service-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    @media(max-width:650px){.service-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.service-logo{width:62px;height:62px;font-size:29px}.service-card{padding:15px 10px 13px}.otp-toolbar{align-items:stretch;flex-direction:column}.search-wrap{max-width:none}.service-count{text-align:right}}
+    @media(max-width:420px){.service-grid{gap:10px}.price-tag{padding:7px 8px;font-size:10px}.service-name{font-size:11px;letter-spacing:.3px}.service-logo{margin-top:13px;margin-bottom:13px}}
   </style>
 </head>
 <body>
@@ -171,6 +238,12 @@
   <section id="appScreen" class="app hidden">
     <header class="topbar">
       <div class="logo"><span class="logo-mark"><i class="fa-solid fa-message"></i></span> MAILLY OTP</div>
+      <nav class="app-nav">
+        <a class="active" href="index.html">รับ OTP</a>
+        <a href="page2.html">เติมเครดิต</a>
+        <a href="shop.html">ร้านค้า</a>
+        <a href="youtube.html">YouTube</a>
+      </nav>
       <div class="nav-actions">
         <div class="balance-chip"><i class="fa-solid fa-wallet"></i><span>เครดิต</span><strong id="balance">0.00 ฿</strong></div>
         <div class="user-menu"><button class="user-button"><span id="avatar" class="avatar">M</span><span id="navUsername">สมาชิก</span></button></div>
@@ -185,28 +258,19 @@
       </div>
 
       <div class="grid">
-        <article class="card">
-          <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-mobile-screen-button"></i></span> ซื้อหมายเลข OTP</h2><p>เลือกบริการและประเทศที่ต้องการใช้งาน</p></div>
+        <article class="card otp-browser">
+          <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-grid-2"></i></span> เลือกแอปที่ต้องการรับ OTP</h2><p>แตะการ์ดแอป แล้วเลือกประเทศและตรวจสอบราคาก่อนซื้อ</p></div>
           <div class="card-body">
             <div id="purchaseAlert" class="alert"></div>
-            <div class="form-grid">
-              <div class="field"><label for="serviceSelect">บริการ</label><select id="serviceSelect" class="select"><option value="">กำลังโหลดบริการ...</option></select></div>
-              <div class="field"><label for="countrySelect">ประเทศ</label><select id="countrySelect" class="select" disabled><option value="">เลือกบริการก่อน</option></select></div>
+            <div class="otp-toolbar">
+              <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="serviceSearch" class="service-search" type="search" placeholder="ค้นหาแอป เช่น Google, Discord, TikTok" autocomplete="off"></div>
+              <div id="serviceCount" class="service-count">กำลังเตรียมรายการ...</div>
             </div>
-            <div class="quote"><span>ราคาที่ต้องชำระ</span><strong><span id="quotePrice">—</span> ฿</strong></div>
-            <button id="buyButton" class="primary buy" disabled><i class="fa-solid fa-bolt"></i> ซื้อหมายเลข</button>
+            <div id="serviceGrid" class="service-grid">
+              <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+            </div>
           </div>
         </article>
-
-        <aside class="card">
-          <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-grid-2"></i></span> เมนูบริการ</h2><p>เข้าถึงบริการอื่นของ Mailly</p></div>
-          <div class="card-body mini-links">
-            <a class="mini-link" href="page2.html"><i class="fa-solid fa-wallet"></i><strong>เติมเครดิต</strong><span>PromptPay และสลิป</span></a>
-            <a class="mini-link" href="shop.html"><i class="fa-solid fa-bag-shopping"></i><strong>ร้านค้า</strong><span>สินค้าและบริการ</span></a>
-            <a class="mini-link" href="youtube.html"><i class="fa-brands fa-youtube"></i><strong>YouTube</strong><span>Premium Family</span></a>
-            <button class="mini-link" type="button" id="copyUserButton" style="text-align:left"><i class="fa-regular fa-copy"></i><strong>คัดลอก Username</strong><span id="miniUsername">—</span></button>
-          </div>
-        </aside>
 
         <article class="card orders-card">
           <div class="card-head orders-head"><div><h2><span class="icon-box"><i class="fa-solid fa-clock-rotate-left"></i></span> รายการของฉัน</h2><p>ตรวจสอบหมายเลข สถานะ และรหัส OTP</p></div><button id="refreshOrders" class="refresh"><i class="fa-solid fa-rotate"></i> รีเฟรช</button></div>
@@ -216,19 +280,56 @@
     </main>
   </section>
 
+  <div id="otpModal" class="otp-modal hidden" role="dialog" aria-modal="true" aria-labelledby="selectedServiceName">
+    <div class="otp-dialog">
+      <div class="dialog-head">
+        <div id="selectedServiceLogo" class="dialog-logo"><i class="fa-solid fa-mobile-screen-button"></i></div>
+        <div><h2 id="selectedServiceName">เลือกประเทศ</h2><p>ราคาจะแสดงหลังเลือกประเทศ</p></div>
+        <button id="closeOtpModal" class="dialog-close" type="button" aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="field"><label for="countrySelect">ประเทศที่ต้องการรับหมายเลข</label><select id="countrySelect" class="select" disabled><option value="">กำลังโหลดประเทศ...</option></select></div>
+      <div class="quote"><span>ราคาที่ต้องชำระ</span><strong><span id="quotePrice">—</span> ฿</strong></div>
+      <button id="buyButton" class="primary buy" disabled><i class="fa-solid fa-bolt"></i> ซื้อหมายเลข OTP</button>
+      <div id="modalAlert" class="alert" style="margin-top:14px;margin-bottom:0"></div>
+    </div>
+  </div>
+
   <div id="toast" class="toast"></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxNjUZEH_e-ulJZwRyrfbtMItsYM15CjwtfOPZ6POG9Xa1WEiQcuYp2lLGKqt-dPMs5/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
     const EXPECTED_BACKEND_VERSION = "2026.07.30-auth-v3";
     const STORAGE_TOKEN = "mailly_session_token";
+    const CACHE_PREFIX = "mailly_cache_";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let backendReady = false;
-    let currentUser = null;
+    let currentUser = readCache(CACHE_PREFIX + "user");
     let currentQuote = null;
+    let selectedService = null;
+    let allServices = [];
     let orderPoller = null;
 
     const $ = id => document.getElementById(id);
+    function readCache(key) {
+      try {
+        const cached = JSON.parse(localStorage.getItem(key) || "null");
+        return cached && Object.prototype.hasOwnProperty.call(cached, "data") ? cached.data : null;
+      } catch (_) { return null; }
+    }
+    function writeCache(key, data) {
+      try { localStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), data })); } catch (_) {}
+    }
+    function userCacheKey(name) {
+      return `${CACHE_PREFIX}${String(currentUser?.username || "guest").toLowerCase()}_${name}`;
+    }
+    function saveCurrentUser() {
+      if (currentUser) writeCache(CACHE_PREFIX + "user", currentUser);
+    }
+    function clearMaillyCache() {
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith(CACHE_PREFIX)) localStorage.removeItem(key);
+      });
+    }
     async function api(action, payload = {}) {
       const response = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action, payload: { ...payload, token: sessionToken } }) });
       const data = await response.json();
@@ -314,6 +415,7 @@
       }
 
       currentUser = verified.user;
+      saveCurrentUser();
       localStorage.setItem("username", currentUser.username);
       localStorage.setItem("mailly_remembered_user", currentUser.username);
       renderApp();
@@ -321,13 +423,18 @@
 
     function renderApp() {
       hide("loadingScreen"); hide("authScreen"); show("appScreen");
-      $("navUsername").textContent = currentUser.username;
-      $("welcomeUsername").textContent = currentUser.username;
-      $("miniUsername").textContent = currentUser.username;
-      $("avatar").textContent = currentUser.username.charAt(0).toUpperCase();
-      $("balance").textContent = Number(currentUser.balance || 0).toFixed(2) + " ฿";
+      renderUserSummary();
       loadServices(); loadOrders();
       clearInterval(orderPoller); orderPoller = setInterval(loadOrders, 7000);
+      clearTimeout(renderApp._prefetchTimer);
+      renderApp._prefetchTimer = setTimeout(prefetchSecondaryPages, 100);
+    }
+
+    function renderUserSummary() {
+      $("navUsername").textContent = currentUser.username;
+      $("welcomeUsername").textContent = currentUser.username;
+      $("avatar").textContent = currentUser.username.charAt(0).toUpperCase();
+      $("balance").textContent = Number(currentUser.balance || 0).toFixed(2) + " ฿";
     }
 
     function showAuth() {
@@ -336,48 +443,168 @@
 
     async function logout(callApi = true) {
       if (callApi && sessionToken) { try { await api("logoutUser"); } catch (_) {} }
-      sessionToken = ""; currentUser = null; localStorage.removeItem(STORAGE_TOKEN);
+      sessionToken = ""; currentUser = null; localStorage.removeItem(STORAGE_TOKEN); clearMaillyCache();
       clearInterval(orderPoller); showAuth();
     }
     $("logoutButton").addEventListener("click", () => logout(true));
 
-    async function loadServices() {
-      const select = $("serviceSelect");
-      try {
-        const data = await api("getServices");
-        const items = Array.isArray(data) ? data : Object.values(data || {}).filter(x => x && typeof x === "object");
-        select.innerHTML = `<option value="">เลือกบริการ</option>` + items.filter(x => x.ID && x.name).sort((a,b) => a.name.localeCompare(b.name)).map(x => `<option value="${escapeHtml(x.ID)}">${escapeHtml(x.name)}</option>`).join("");
-      } catch (_) { select.innerHTML = `<option value="">โหลดบริการไม่สำเร็จ</option>`; }
+    function serviceVisual(name) {
+      const text = String(name || "").toLowerCase();
+      const brands = [
+        ["gmail", "fa-brands fa-google", "#ffffff", "#4285f4"],
+        ["google", "fa-brands fa-google", "#ffffff", "#4285f4"],
+        ["discord", "fa-brands fa-discord", "#5865f2", "#ffffff"],
+        ["instagram", "fa-brands fa-instagram", "linear-gradient(145deg,#ffcf5c,#d62976 55%,#4f5bd5)", "#ffffff"],
+        ["microsoft", "fa-brands fa-microsoft", "#ffffff", "#f35325"],
+        ["twitter", "fa-brands fa-x-twitter", "#050505", "#ffffff"],
+        ["x.com", "fa-brands fa-x-twitter", "#050505", "#ffffff"],
+        ["facebook", "fa-brands fa-facebook-f", "#1877f2", "#ffffff"],
+        ["wechat", "fa-brands fa-weixin", "#07c160", "#ffffff"],
+        ["whatsapp", "fa-brands fa-whatsapp", "#25d366", "#ffffff"],
+        ["telegram", "fa-brands fa-telegram", "#279fda", "#ffffff"],
+        ["tiktok", "fa-brands fa-tiktok", "#050505", "#ffffff"],
+        ["youtube", "fa-brands fa-youtube", "#ff0033", "#ffffff"],
+        ["apple", "fa-brands fa-apple", "#ffffff", "#111111"],
+        ["amazon", "fa-brands fa-amazon", "#ffffff", "#111111"],
+        ["paypal", "fa-brands fa-paypal", "#ffffff", "#003087"],
+        ["steam", "fa-brands fa-steam", "#11253c", "#ffffff"],
+        ["line", "fa-brands fa-line", "#06c755", "#ffffff"],
+        ["vk", "fa-brands fa-vk", "#2787f5", "#ffffff"],
+        ["netflix", "fa-solid fa-n", "#090909", "#e50914"],
+        ["roblox", "fa-solid fa-cube", "#111111", "#ffffff"],
+        ["lazada", "fa-solid fa-bag-shopping", "#24108f", "#ff8b3d"],
+        ["shopee", "fa-solid fa-bag-shopping", "#ee4d2d", "#ffffff"],
+        ["grab", "fa-solid fa-car", "#00b14f", "#ffffff"],
+        ["foodpanda", "fa-solid fa-paw", "#d70f64", "#ffffff"],
+        ["nike", "fa-solid fa-check", "#050505", "#ffffff"],
+        ["7-eleven", "fa-solid fa-store", "#ffffff", "#ef3123"],
+        ["lotus", "fa-solid fa-leaf", "#00b9a9", "#ffffff"]
+      ];
+      const found = brands.find(item => text.includes(item[0]));
+      return found ? { icon: found[1], background: found[2], color: found[3] } : null;
     }
 
-    $("serviceSelect").addEventListener("change", async event => {
-      currentQuote = null; $("quotePrice").textContent = "—"; $("buyButton").disabled = true;
-      const country = $("countrySelect"); country.disabled = true; country.innerHTML = `<option value="">กำลังโหลดประเทศ...</option>`;
-      if (!event.target.value) return;
-      const data = await api("getCountryDataForService", { serviceId: event.target.value });
-      const items = Array.isArray(data) ? data : Object.keys(data || {}).map(id => ({ id, ...data[id] }));
-      country.innerHTML = `<option value="">เลือกประเทศ</option>` + items.filter(x => x.country_id || x.id).sort((a,b) => String(a.name).localeCompare(String(b.name))).map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
-      country.disabled = false;
+    function normalizeServices(data) {
+      const raw = Array.isArray(data) ? data : Object.values(data || {}).filter(x => x && typeof x === "object");
+      return raw.map(item => ({
+        id: item.ID ?? item.id ?? item.service_id ?? item.service,
+        name: item.name ?? item.service_name ?? item.title ?? item.ID ?? item.id
+      })).filter(item => item.id && item.name).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    }
+
+    function renderServices(items) {
+      allServices = items;
+      const query = $("serviceSearch").value.trim().toLowerCase();
+      const visible = query ? items.filter(item => String(item.name).toLowerCase().includes(query)) : items;
+      $("serviceCount").textContent = `${visible.length} แอป`;
+      if (!visible.length) {
+        $("serviceGrid").innerHTML = `<div class="empty services-empty"><i class="fa-solid fa-magnifying-glass" style="display:block;font-size:24px;margin-bottom:10px"></i>ไม่พบแอปที่ค้นหา</div>`;
+        return;
+      }
+      $("serviceGrid").innerHTML = visible.map(item => {
+        const index = items.indexOf(item);
+        const visual = serviceVisual(item.name);
+        const logo = visual
+          ? `<div class="service-logo" style="background:${visual.background};color:${visual.color}"><i class="${visual.icon}"></i></div>`
+          : `<div class="service-logo fallback">${escapeHtml(String(item.name).charAt(0).toUpperCase())}</div>`;
+        return `<button class="service-card" type="button" data-service-index="${index}">
+          <span class="price-tag"><i class="fa-solid fa-tag"></i> เริ่ม 7฿</span>
+          ${logo}
+          <span class="service-name">${escapeHtml(item.name)}</span>
+        </button>`;
+      }).join("");
+    }
+
+    async function loadServices() {
+      try {
+        const cached = readCache(userCacheKey("otp_services"));
+        if (cached) renderServices(cached);
+        const data = await api("getServices");
+        if (data && data.success === false) throw new Error(data.message || "โหลดรายการแอปไม่สำเร็จ");
+        const items = normalizeServices(data);
+        writeCache(userCacheKey("otp_services"), items);
+        renderServices(items);
+      } catch (_) {
+        if (!allServices.length) $("serviceGrid").innerHTML = `<div class="empty services-empty">โหลดรายการแอปไม่สำเร็จ กรุณากดรีเฟรชอีกครั้ง</div>`;
+      }
+    }
+
+    async function openService(index) {
+      selectedService = allServices[index];
+      if (!selectedService) return;
+      currentQuote = null;
+      $("quotePrice").textContent = "—";
+      $("buyButton").disabled = true;
+      alertBox("modalAlert", "");
+      $("selectedServiceName").textContent = selectedService.name;
+      const visual = serviceVisual(selectedService.name);
+      $("selectedServiceLogo").style.background = visual?.background || "linear-gradient(145deg,#ff9c5e,#ff5b0a)";
+      $("selectedServiceLogo").style.color = visual?.color || "#fff";
+      $("selectedServiceLogo").innerHTML = visual ? `<i class="${visual.icon}"></i>` : escapeHtml(String(selectedService.name).charAt(0).toUpperCase());
+      $("otpModal").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+
+      const country = $("countrySelect");
+      country.disabled = true;
+      country.innerHTML = `<option value="">กำลังโหลดประเทศ...</option>`;
+      try {
+        const cacheKey = userCacheKey(`otp_countries_${selectedService.id}`);
+        let items = readCache(cacheKey);
+        if (!items) {
+          const data = await api("getCountryDataForService", { serviceId: selectedService.id });
+          if (data && data.success === false) throw new Error(data.message || "โหลดประเทศไม่สำเร็จ");
+          items = Array.isArray(data) ? data : Object.keys(data || {}).map(id => ({ id, ...data[id] }));
+          writeCache(cacheKey, items);
+        }
+        const countries = items.filter(x => x.country_id || x.id).sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
+        country.innerHTML = `<option value="">เลือกประเทศ</option>` + countries.map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
+        country.disabled = false;
+      } catch (error) {
+        country.innerHTML = `<option value="">โหลดประเทศไม่สำเร็จ</option>`;
+        alertBox("modalAlert", error.message || "โหลดประเทศไม่สำเร็จ");
+      }
+    }
+
+    function closeOtpModal() {
+      $("otpModal").classList.add("hidden");
+      document.body.style.overflow = "";
+      selectedService = null;
+      currentQuote = null;
+    }
+
+    $("serviceSearch").addEventListener("input", () => renderServices(allServices));
+    $("serviceGrid").addEventListener("click", event => {
+      const card = event.target.closest("[data-service-index]");
+      if (card) openService(Number(card.dataset.serviceIndex));
+    });
+    $("closeOtpModal").addEventListener("click", closeOtpModal);
+    $("otpModal").addEventListener("click", event => {
+      if (event.target === $("otpModal")) closeOtpModal();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !$("otpModal").classList.contains("hidden")) closeOtpModal();
     });
 
     $("countrySelect").addEventListener("change", async event => {
       currentQuote = null; $("quotePrice").textContent = "—"; $("buyButton").disabled = true;
-      if (!event.target.value) return;
-      const result = await api("getPriceQuote", { serviceId: $("serviceSelect").value, countryId: event.target.value });
-      if (!result.success) return alertBox("purchaseAlert", result.message);
+      alertBox("modalAlert", "");
+      if (!event.target.value || !selectedService) return;
+      const result = await api("getPriceQuote", { serviceId: selectedService.id, countryId: event.target.value });
+      if (!result.success) return alertBox("modalAlert", result.message);
       currentQuote = result.price; $("quotePrice").textContent = Number(result.price).toFixed(2); $("buyButton").disabled = false;
     });
 
     $("buyButton").addEventListener("click", async () => {
-      if (!currentQuote) return;
-      alertBox("purchaseAlert", "");
+      if (!currentQuote || !selectedService) return;
+      alertBox("modalAlert", "");
       const button = $("buyButton"); setBusy(button, true, "กำลังซื้อหมายเลข...");
       try {
-        const result = await api("buyNumberWithCredit", { serviceId: $("serviceSelect").value, countryId: $("countrySelect").value });
+        const result = await api("buyNumberWithCredit", { serviceId: selectedService.id, countryId: $("countrySelect").value });
         if (!result.success) throw new Error(result.message || "ซื้อหมายเลขไม่สำเร็จ");
-        currentUser.balance = result.newCredit; $("balance").textContent = Number(result.newCredit).toFixed(2) + " ฿";
+        currentUser.balance = result.newCredit; saveCurrentUser(); $("balance").textContent = Number(result.newCredit).toFixed(2) + " ฿";
+        closeOtpModal();
         toast("ซื้อหมายเลขสำเร็จ"); await loadOrders();
-      } catch (error) { alertBox("purchaseAlert", error.message); }
+      } catch (error) { alertBox("modalAlert", error.message); }
       finally { setBusy(button, false); }
     });
 
@@ -412,12 +639,11 @@
       if (!confirm("ยืนยันยกเลิกหมายเลขและขอคืนเครดิต?")) return;
       const result = await api("cancelOrderWithRefund", { orderId });
       if (!result.success) return toast(result.message || "ยังไม่สามารถยกเลิกได้");
-      currentUser.balance = result.newCredit; $("balance").textContent = Number(result.newCredit).toFixed(2) + " ฿";
+      currentUser.balance = result.newCredit; saveCurrentUser(); $("balance").textContent = Number(result.newCredit).toFixed(2) + " ฿";
       toast("ยกเลิกและคืนเครดิตแล้ว"); await loadOrders();
     }
     window.checkOrder = checkOrder; window.cancelOrder = cancelOrder;
     $("refreshOrders").addEventListener("click", loadOrders);
-    $("copyUserButton").addEventListener("click", () => navigator.clipboard.writeText(currentUser.username).then(() => toast("คัดลอก Username แล้ว")));
 
     async function checkBackend() {
       const result = await api("healthCheck");
@@ -429,13 +655,50 @@
       backendReady = true;
     }
 
+    async function prefetchSecondaryPages() {
+      if (!sessionToken || !currentUser) return;
+      const stampKey = userCacheKey("prefetch_at");
+      const lastRun = Number(localStorage.getItem(stampKey) || 0);
+      if (Date.now() - lastRun < 60000) return;
+      localStorage.setItem(stampKey, String(Date.now()));
+
+      const jobs = [
+        ["getShopProducts", "shop_products", result => result.success ? result.products || [] : null],
+        ["getMyPurchases", "shop_history", result => result.success ? result.purchases || [] : null],
+        ["getYtUserData", "yt_families", result => result.success ? result.items || [] : null],
+        ["getUserInboxMessages", "yt_inbox", result => result.success ? result.messages || [] : null]
+      ];
+      await Promise.allSettled(jobs.map(async ([action, cacheName, select]) => {
+        const result = await api(action);
+        const data = select(result);
+        if (data !== null) writeCache(userCacheKey(cacheName), data);
+      }));
+    }
+
     (async function boot() {
+      if (sessionToken && currentUser) {
+        backendReady = true;
+        renderApp();
+        try {
+          const [, result] = await Promise.all([checkBackend(), api("getSessionUser")]);
+          if (!result.success || !result.user) throw new Error(result.message || "Session หมดอายุ");
+          currentUser = result.user;
+          saveCurrentUser();
+          renderUserSummary();
+        } catch (error) {
+          if (sessionToken) {
+            await logout(false);
+            alertBox("authAlert", error.message || "เชื่อมต่อ Backend ไม่สำเร็จ");
+          }
+        }
+        return;
+      }
       try {
         await checkBackend();
         if (!sessionToken) return showAuth();
         const result = await api("getSessionUser");
         if (!result.success) throw new Error();
-        currentUser = result.user; renderApp();
+        currentUser = result.user; saveCurrentUser(); renderApp();
       } catch (error) {
         await logout(false);
         alertBox("authAlert", error.message || "เชื่อมต่อ Backend ไม่สำเร็จ");

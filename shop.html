@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#160d17">
   <title>ร้านค้า — Mailly OTP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="shared.css?v=20260730-cocoa1">
 </head>
 <body>
   <header class="topbar">
@@ -30,12 +31,12 @@
 
     <section id="shopView">
       <div id="shopMessage" class="notice hidden" style="margin-bottom:16px"></div>
-      <div id="products" class="products"><div class="loader"></div></div>
+      <div id="products" class="products"><div class="card empty" style="grid-column:1/-1">กำลังอัปเดตสินค้า...</div></div>
     </section>
 
     <section id="historyView" class="hidden card">
       <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-bag-shopping"></i></span> ประวัติการซื้อของฉัน</h2><p>รายการนี้ดึงจากหลังบ้าน จึงเปิดดูได้จากทุกอุปกรณ์</p></div>
-      <div id="history" class="card-body list"><div class="loader"></div></div>
+      <div id="history" class="card-body list"><div class="empty">กำลังอัปเดตประวัติ...</div></div>
     </section>
   </main>
 
@@ -57,7 +58,7 @@
     </div>
   </div>
 
-  <script src="shared.js"></script>
+  <script src="shared.js?v=20260730-cocoa1"></script>
   <script>
     let selectedProduct = null;
     let showingHistory = false;
@@ -68,10 +69,7 @@
       el.className = "notice " + type;
     }
 
-    async function loadProducts() {
-      const result = await Mailly.api("getShopProducts");
-      if (!result.success) throw new Error(result.message || "โหลดสินค้าไม่สำเร็จ");
-      const items = result.products || [];
+    function renderProducts(items) {
       const container = document.getElementById("products");
       if (!items.length) {
         container.innerHTML = '<div class="card empty" style="grid-column:1/-1">ยังไม่มีสินค้า กรุณาเพิ่มสินค้าและสต็อกในชีต Products / ProductStock</div>';
@@ -88,6 +86,15 @@
           </div>
         </article>`).join("");
       window.shopProducts = items;
+    }
+
+    async function loadProducts() {
+      const result = await Mailly.api("getShopProducts");
+      if (!result.success) throw new Error(result.message || "โหลดสินค้าไม่สำเร็จ");
+      const items = result.products || [];
+      Mailly.setCache("shop_products", items);
+      renderProducts(items);
+      return items;
     }
 
     function openBuy(id) {
@@ -115,7 +122,7 @@
         Mailly.setBalance(result.newCredit);
         closeBuy();
         showMessage("ซื้อสินค้าสำเร็จ เปิดดูข้อมูลได้ในประวัติการซื้อ", "success");
-        await loadProducts();
+        await Promise.all([loadProducts(), loadHistory()]);
       } catch (error) {
         showMessage(error.message, "error");
         closeBuy();
@@ -125,12 +132,13 @@
       }
     }
 
-    async function loadHistory() {
-      const result = await Mailly.api("getMyPurchases");
-      if (!result.success) throw new Error(result.message || "โหลดประวัติไม่สำเร็จ");
-      const items = result.purchases || [];
+    function renderHistory(items) {
       const container = document.getElementById("history");
-      if (!items.length) return container.innerHTML = '<div class="empty">ยังไม่มีประวัติการซื้อ</div>';
+      if (!items.length) {
+        window.purchaseItems = [];
+        container.innerHTML = '<div class="empty">ยังไม่มีประวัติการซื้อ</div>';
+        return;
+      }
       container.innerHTML = items.map((item, index) => `
         <div class="list-item">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
@@ -139,6 +147,15 @@
           </div>
         </div>`).join("");
       window.purchaseItems = items;
+    }
+
+    async function loadHistory() {
+      const result = await Mailly.api("getMyPurchases");
+      if (!result.success) throw new Error(result.message || "โหลดประวัติไม่สำเร็จ");
+      const items = result.purchases || [];
+      Mailly.setCache("shop_history", items);
+      renderHistory(items);
+      return items;
     }
 
     function showDetail(index) {
@@ -153,13 +170,19 @@
       document.getElementById("shopView").classList.toggle("hidden", showingHistory);
       document.getElementById("historyView").classList.toggle("hidden", !showingHistory);
       document.getElementById("viewButtonText").textContent = showingHistory ? "กลับหน้าร้าน" : "ประวัติการซื้อ";
-      if (showingHistory) await loadHistory();
+      if (showingHistory) {
+        const cached = Mailly.getCache("shop_history");
+        if (cached) renderHistory(cached);
+        void loadHistory().catch(error => showMessage(error.message, "error"));
+      }
     }
 
     (async () => {
       try {
+        const cached = Mailly.getCache("shop_products");
+        if (cached) renderProducts(cached);
         await Mailly.requireUser();
-        await loadProducts();
+        void loadProducts().catch(error => showMessage(error.message, "error"));
       } catch (error) {
         showMessage(error.message, "error");
       }

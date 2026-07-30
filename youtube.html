@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#160d17">
   <title>YouTube Premium — Mailly OTP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="shared.css?v=20260730-cocoa1">
 </head>
 <body>
   <header class="topbar">
@@ -33,11 +34,11 @@
     <div class="grid">
       <section class="card col-8">
         <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-people-roof"></i></span> รายการ YouTube ของฉัน</h2><p>ระบบแสดงเฉพาะข้อมูลของบัญชีที่ล็อกอินอยู่</p></div>
-        <div id="familyList" class="card-body list"><div class="loader"></div></div>
+        <div id="familyList" class="card-body list"><div class="empty">กำลังอัปเดตรายการ...</div></div>
       </section>
       <section class="card col-4">
         <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-inbox"></i></span> กล่องข้อความ</h2><p>ข้อความแจ้งเตือนจากผู้ดูแล</p></div>
-        <div id="inbox" class="card-body list"><div class="loader"></div></div>
+        <div id="inbox" class="card-body list"><div class="empty">กำลังอัปเดตข้อความ...</div></div>
       </section>
       <section id="adminSection" class="card col-12 hidden">
         <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-shield-halved"></i></span> จัดการ YouTube</h2><p>ส่วนนี้เปิดเฉพาะบัญชี admin ที่ผ่าน session แล้ว</p></div>
@@ -66,7 +67,7 @@
     </div>
   </div>
 
-  <script src="shared.js"></script>
+  <script src="shared.js?v=20260730-cocoa1"></script>
   <script>
     let adminRows = [];
 
@@ -86,12 +87,7 @@
       return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString("th-TH");
     }
 
-    async function loadUserData() {
-      const [familyResult, inboxResult] = await Promise.all([
-        Mailly.api("getYtUserData"),
-        Mailly.api("getUserInboxMessages")
-      ]);
-      const families = familyResult.items || [];
+    function renderUserData(families, messages) {
       const familyList = document.getElementById("familyList");
       familyList.innerHTML = families.length ? families.map(item => `
         <div class="list-item">
@@ -101,10 +97,23 @@
           </div>
         </div>`).join("") : '<div class="empty">ยังไม่มีรายการ YouTube ในบัญชีนี้</div>';
 
-      const messages = inboxResult.messages || [];
       const inbox = document.getElementById("inbox");
       inbox.innerHTML = messages.length ? messages.slice().reverse().map(item => `
         <div class="list-item"><strong>แจ้งเตือนจากผู้ดูแล</strong><div style="white-space:pre-wrap">${Mailly.escape(item.message)}</div><span class="muted">${Mailly.escape(item.date)}</span></div>`).join("") : '<div class="empty">ยังไม่มีข้อความ</div>';
+    }
+
+    async function loadUserData() {
+      const [familyResult, inboxResult] = await Promise.all([
+        Mailly.api("getYtUserData"),
+        Mailly.api("getUserInboxMessages")
+      ]);
+      if (!familyResult.success) throw new Error(familyResult.message || "โหลดรายการ YouTube ไม่สำเร็จ");
+      if (!inboxResult.success) throw new Error(inboxResult.message || "โหลดข้อความไม่สำเร็จ");
+      const families = familyResult.items || [];
+      const messages = inboxResult.messages || [];
+      Mailly.setCache("yt_families", families);
+      Mailly.setCache("yt_inbox", messages);
+      renderUserData(families, messages);
     }
 
     async function submitOrder() {
@@ -121,6 +130,7 @@
         Mailly.setBalance(result.newCredit);
         closeOrder();
         showMessage("รับคำสั่งซื้อแล้ว รหัสรายการ " + result.orderId, "success");
+        void loadUserData().catch(() => {});
       } catch (error) {
         showMessage(error.message, "error");
       } finally {
@@ -159,8 +169,11 @@
 
     (async () => {
       try {
+        const cachedFamilies = Mailly.getCache("yt_families");
+        const cachedInbox = Mailly.getCache("yt_inbox");
+        if (cachedFamilies || cachedInbox) renderUserData(cachedFamilies || [], cachedInbox || []);
         const user = await Mailly.requireUser();
-        await loadUserData();
+        void loadUserData().catch(error => showMessage(error.message, "error"));
         if (String(user.username).toLowerCase() === "admin") {
           document.getElementById("adminSection").classList.remove("hidden");
           await loadAdmin();
