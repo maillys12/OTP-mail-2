@@ -1,4 +1,4 @@
-const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
+const MAILLY_API_URL = "https://script.google.com/macros/s/AKfycbxNjUZEH_e-ulJZwRyrfbtMItsYM15CjwtfOPZ6POG9Xa1WEiQcuYp2lLGKqt-dPMs5/exec";
 const MAILLY_BACKEND_VERSION = "2026.07.30-auth-v3";
 const MAILLY_TOKEN_KEY = "mailly_session_token";
 
